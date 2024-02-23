@@ -23,20 +23,15 @@ public class TileObject : MonoBehaviour, IPointerClickHandler
     {
         if(this.tile != null)
         {
-            this.tile.tileObj = null;
+            this.tile.ChangeTileObj(null);
         }
 
         this.tile = tile;
         if (this.tile != null)
         {
-            this.tile.tileObj = this;
+            this.tile.ChangeTileObj(this);
             //transform.position = tile.transform.position;
         }
-    }
-
-    public void EnableObj()
-    {
-
     }
 
     public void DisableObj()

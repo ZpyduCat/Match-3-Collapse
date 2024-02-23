@@ -58,7 +58,7 @@ public class Field : MonoBehaviour
             {
                 Vector3 pos = new Vector3(x + offSetX + spacing.x, y + offSetY + spacing.y, 0f);
                 tiles[x, y] = Instantiate(tilePrefab, pos, Quaternion.identity, transform);
-                tiles[x, y].pos = new Vector2Int(x, y);
+                tiles[x, y].Init(new Vector2Int(x, y), !IsTileOnGameField(x,y));
                 spacing.y += spacingY;
             }
 

@@ -5,6 +5,7 @@ using TMPro;
 public class GameOverUI : MonoBehaviour
 {
     [SerializeField] private TMP_InputField nameInputField;
+    [SerializeField] private TMP_Text nameInputPlacholderText;
     [SerializeField] private Button recordButton;
     [SerializeField] private GameObject nameInput;
     private Player player;
@@ -29,6 +30,14 @@ public class GameOverUI : MonoBehaviour
         if (isSaved)
             return;
 
+        if(string.IsNullOrEmpty(nameInputField.text))
+        {
+            nameInputPlacholderText.color = Color.red;
+            nameInputPlacholderText.text = "Введите имя здесь";
+
+            return;
+        }
+
         PlayerData player = new PlayerData();
         player.name = nameInputField.text;
         player.score = this.player.GetScore();
@@ -36,6 +45,8 @@ public class GameOverUI : MonoBehaviour
 
         isSaved = true;
         recordButton.interactable = false;
+        nameInputField.interactable = false;
+        nameInputField.text = "Записано";
     }
 
 }

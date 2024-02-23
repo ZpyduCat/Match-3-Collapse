@@ -710,10 +710,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9638c363f54b7745af6b22fd31145b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  saveData:
-    playersData: []
-    gameSoundVolume: 0
-    musicVolume: 0
 --- !u!4 &1915205318
 Transform:
   m_ObjectHideFlags: 0
