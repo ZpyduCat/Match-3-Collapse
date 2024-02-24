@@ -11,7 +11,7 @@ public class SaveToBinaryFile
         filePath = Application.persistentDataPath + "/SaveData.dat";
     }
 
-    //Сохранение данных для рекордов
+    //Сохранение данных
     public void Save(SaveData data)
     {
         BinaryFormatter bf = new BinaryFormatter();
@@ -21,10 +21,9 @@ public class SaveToBinaryFile
         file.Close();
     }
 
-    //Загрузка данных для рекордов
+    //Загрузка данных
     public SaveData Load()
     {
-        //Если файла ещё нету то тогда создает начальный файл
         if (!File.Exists(filePath))
         {
             return null;

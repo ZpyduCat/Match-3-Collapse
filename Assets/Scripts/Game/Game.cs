@@ -13,8 +13,6 @@ public class Game : MonoBehaviour
     private CutLineCalculator cutLineCalculator;
     private TileObjectsControl tileObjectsControl;
 
-
-
     public void Init()
     {
         cutLineCalculator = new CutLineCalculator(field);
@@ -24,7 +22,7 @@ public class Game : MonoBehaviour
 
     public void StartGame()
     {
-        GenerateField();
+        GenerateObjectsOnField();
     }
 
     public void GameOver()
@@ -32,7 +30,8 @@ public class Game : MonoBehaviour
         gameOverUI.Show(player);
     }
 
-    public void GenerateField()
+    //Создание объектов на поле
+    public void GenerateObjectsOnField()
     {
         for (int x = 0; x < field.sizeX; x++)
         {
@@ -51,6 +50,7 @@ public class Game : MonoBehaviour
         }
     }
 
+    //Пересчет пустых полей и смешение их в низ.
     public void Recalculate()
     {
         for (int x = 0; x < field.sizeX; x++)
@@ -74,18 +74,14 @@ public class Game : MonoBehaviour
         }
     }
 
-    private void OnTileObjClick(TileObject tileObject)
-    {
-        CutLine(tileObject.tile.pos);
-    }
-
+    //Удаление объектов
     private void CutLine(Vector2Int startPos)
     {
         TileObject startTileObject = field.GetTile(startPos.x, startPos.y).tileObj;
-
-        List<Vector2Int> linesToCut = cutLineCalculator.GetLinesToCut(startPos, startTileObject.type);
         List<TileObject> linesToDestroy = new List<TileObject>();
+        List<Vector2Int> linesToCut = cutLineCalculator.GetLinesToCut(startPos, startTileObject.type);
 
+        //Отписка от эвента клика и скрытие
         foreach (var pos in linesToCut)
         {
             Tile tile = field.GetTile(pos.x, pos.y);
@@ -109,6 +105,13 @@ public class Game : MonoBehaviour
         }
     }
 
+    //Обработка клика по объекту
+    private void OnTileObjClick(TileObject tileObject)
+    {
+        CutLine(tileObject.tile.pos);
+    }
+
+    //Удаление объектов с задержкой
     private IEnumerator CutLineDestroy(List<TileObject> tilesToDestroy)
     {
         float timeDelay = destroyDelay / tilesToDestroy.Count;
@@ -123,6 +126,6 @@ public class Game : MonoBehaviour
         }
 
         Recalculate();
-        GenerateField();
+        GenerateObjectsOnField();
     }
 }

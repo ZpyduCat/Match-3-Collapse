@@ -6,15 +6,18 @@ public delegate void OnTileObjClickHandler (TileObject tileObject);
 public class TileObject : MonoBehaviour, IPointerClickHandler
 {
     public event OnTileObjClickHandler OnTileObjClickEvent;
+
     public int type => _type;
     public Tile tile;
     public bool active { set; get; }
+
     [SerializeField] private int _type;
     [SerializeField] private float speed = 5f;
     [SerializeField] private AudioClip[] cutSounds;
     [SerializeField] private Color objectColor;
     private bool isMoving;
 
+    //Обработка перемещения объекта
     void Update()
     {
         if (tile == null || !isMoving)
@@ -26,6 +29,7 @@ public class TileObject : MonoBehaviour, IPointerClickHandler
             isMoving = false;
     }
 
+    //Изменения объекта на котором находится Tile
     public void ChangeTile(Tile tile)
     {
         if(this.tile != null)
@@ -46,7 +50,7 @@ public class TileObject : MonoBehaviour, IPointerClickHandler
         ChangeTile(null);
     }
 
-    //
+    //"Взрыв" объекта
     public void Explode()
     {
         AudioManager.Singletone.gameSoundsAudioSource.PlayOneShot(cutSounds[Random.Range(0, cutSounds.Length - 1)]);

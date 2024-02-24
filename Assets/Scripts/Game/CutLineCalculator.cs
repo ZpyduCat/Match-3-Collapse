@@ -17,6 +17,7 @@ public class CutLineCalculator
         this.field = field;
     }
 
+    //Поиск рядостоящих объектов по типу
     public List<Vector2Int> GetLinesToCut(Vector2Int startPos, int type)
     {
         int loop = field.gameFieldSizeX * field.gameFieldSizeY;

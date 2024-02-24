@@ -46,11 +46,13 @@ public class GameOverUI : MonoBehaviour
             return;
         }
 
+        //Сохранение данных
         PlayerData player = new PlayerData();
         player.name = nameInputField.text;
         player.score = this.player.GetScore();
         RecordsStorage.Singletone.AddPlayerData(player);
 
+        //Запрещаем ввод игроку после сохранения
         isSaved = true;
         recordButton.interactable = false;
         nameInputField.interactable = false;

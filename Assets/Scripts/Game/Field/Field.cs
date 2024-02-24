@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections.Generic;
 
 public class Field : MonoBehaviour
 {
@@ -22,7 +21,8 @@ public class Field : MonoBehaviour
         tiles = new Tile[sizeX, sizeY];
         GenerateField();
     }
-
+    
+    //Создание поля для объектов
     private void GenerateField()
     {
         float offSetX = transform.position.x;
