@@ -37,6 +37,14 @@ public class GameOverUI : MonoBehaviour
 
             return;
         }
+        else if(nameInputField.text.Length >= 20)
+        {
+            nameInputField.text = string.Empty;
+            nameInputPlacholderText.color = Color.red;
+            nameInputPlacholderText.text = "Имя не может быть больше 20 букв";
+
+            return;
+        }
 
         PlayerData player = new PlayerData();
         player.name = nameInputField.text;

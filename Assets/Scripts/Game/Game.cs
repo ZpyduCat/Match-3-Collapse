@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,17 +8,18 @@ public class Game : MonoBehaviour
     [SerializeField] private List<TileObject> tileObjectPrefabs;
     [SerializeField] private Field field;
     [SerializeField] private GameOverUI gameOverUI;
+    [SerializeField] private float destroyDelay = 1f;
     [Space]
-    [SerializeField] private AudioClip[] cutSounds;
-    private Dictionary<int, List<TileObject>> poolTileObj;
     private CutLineCalculator cutLineCalculator;
-    
+    private TileObjectsControl tileObjectsControl;
+
+
 
     public void Init()
     {
-        poolTileObj = new Dictionary<int, List<TileObject>>();
         cutLineCalculator = new CutLineCalculator(field);
         player = new Player();
+        tileObjectsControl = new TileObjectsControl(tileObjectPrefabs);
     }
 
     public void StartGame()
@@ -40,10 +42,34 @@ public class Game : MonoBehaviour
                 if (tile.tileObj != null)
                     continue;
 
-                TileObject tileObject = SpawnTileObj(tileObjectPrefabs[Random.Range(0, tileObjectPrefabs.Count)].type, field.transform);
-                tileObject.transform.position = tile.transform.position;
+                TileObject tileObject = tileObjectsControl.SpawnTileObj(tileObjectPrefabs[Random.Range(0, tileObjectPrefabs.Count)].type, tile, field.transform);
+
+                tileObject.OnTileObjClickEvent += OnTileObjClick;
 
                 tileObject.ChangeTile(tile);
+            }
+        }
+    }
+
+    public void Recalculate()
+    {
+        for (int x = 0; x < field.sizeX; x++)
+        {
+            Queue<int> voidIndexs = new Queue<int>();
+
+            for (int y = 0; y < field.sizeY; y++)
+            {
+                TileObject tileObject = field.GetTile(x, y).tileObj;
+                if (tileObject == null)
+                {
+                    voidIndexs.Enqueue(y);
+                }
+                else if (tileObject != null && voidIndexs.Count > 0)
+                {
+                    tileObject.ChangeTile(field.GetTile(x, voidIndexs.Dequeue()));
+                    voidIndexs.Enqueue(y);
+                }
+
             }
         }
     }
@@ -58,65 +84,45 @@ public class Game : MonoBehaviour
         TileObject startTileObject = field.GetTile(startPos.x, startPos.y).tileObj;
 
         List<Vector2Int> linesToCut = cutLineCalculator.GetLinesToCut(startPos, startTileObject.type);
+        List<TileObject> linesToDestroy = new List<TileObject>();
 
         foreach (var pos in linesToCut)
         {
             Tile tile = field.GetTile(pos.x, pos.y);
             TileObject tileObject = tile.tileObj;
-            tileObject.Explode();
-            DespawnTileObj(tileObject);
+
+            tileObject.active = false;
+            tileObject.OnTileObjClickEvent -= OnTileObjClick;
+            linesToDestroy.Add(tileObject);
         }
 
+        StartCoroutine(CutLineDestroy(linesToDestroy));
+       
         player.AddScore(linesToCut.Count);
         player.AddHealt(linesToCut.Count);
         player.RemoveHealt(player.GetTapPrice());
         player.AddTurn();
 
-        AudioManager.Singletone.gameSoundsAudioSource.PlayOneShot(cutSounds[Random.Range(0, cutSounds.Length-1)]);
-
         if(player.GetHealt() <= 0)
         {
             GameOver();
         }
+    }
 
-        field.Recalculate();
+    private IEnumerator CutLineDestroy(List<TileObject> tilesToDestroy)
+    {
+        float timeDelay = destroyDelay / tilesToDestroy.Count;
+        while (tilesToDestroy.Count > 0)
+        {
+            TileObject tileObject = tilesToDestroy[tilesToDestroy.Count - 1];
+            tileObject.Explode();
+            tileObjectsControl.DespawnTileObj(tileObject);
+
+            tilesToDestroy.RemoveAt(tilesToDestroy.Count - 1);
+            yield return new WaitForSeconds(timeDelay);
+        }
+
+        Recalculate();
         GenerateField();
-    }
-
-    private TileObject SpawnTileObj(int type, Transform parent)
-    {
-        TileObject tileObject = null;
-        if (poolTileObj.TryGetValue(type, out List<TileObject> pool) && pool.Count > 0)
-        {
-            //Debug.Log("get object from pool: " + type);
-            tileObject = pool[pool.Count - 1];
-            pool.RemoveAt(pool.Count - 1);
-
-            tileObject.transform.SetParent(parent);
-            tileObject.gameObject.SetActive(true);
-        }
-        else
-        {
-            //Debug.Log("spawn object: " + type);
-            TileObject prefab = tileObjectPrefabs.Find(x => x.type == type);
-            tileObject = Instantiate(prefab, parent);
-        }
-
-        tileObject.OnTileObjClickEvent += OnTileObjClick;
-        return tileObject;
-    }
-
-    private void DespawnTileObj(TileObject tileObject)
-    {
-        tileObject.OnTileObjClickEvent -= OnTileObjClick;
-
-
-        if (!poolTileObj.TryGetValue(tileObject.type, out List<TileObject> pool))
-        {
-            poolTileObj[tileObject.type] = new List<TileObject>();
-        }
-
-        tileObject.gameObject.SetActive(false);
-        poolTileObj[tileObject.type].Add(tileObject);
     }
 }

@@ -6,12 +6,14 @@ public class GameScene : MonoBehaviour
     [SerializeField] private Field field;
     [SerializeField] private Game game;
     [SerializeField] private UIScore uiScore;
+    [SerializeField] private ParticleExplode particleExplode;
 
     public void Awake()
     {
         field.Init();
         game.Init();
         uiScore.Init(game.player);
+        particleExplode.Init();
 
         game.StartGame();
     }

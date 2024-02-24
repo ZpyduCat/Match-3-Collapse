@@ -81,6 +81,11 @@ MonoBehaviour:
   tile: {fileID: 0}
   _type: 2
   speed: 5
+  cutSounds:
+  - {fileID: 8300000, guid: 32f43efba93ad6042aa5da04d8c210fe, type: 3}
+  - {fileID: 8300000, guid: 1f6bb335a49ad1b4e8b8dde038254943, type: 3}
+  - {fileID: 8300000, guid: 65203f2ff4490734dad06d4616e4a1da, type: 3}
+  objectColor: {r: 0.73333335, g: 0.3372549, b: 1, a: 1}
 --- !u!65 &6517772721037867160
 BoxCollider:
   m_ObjectHideFlags: 0

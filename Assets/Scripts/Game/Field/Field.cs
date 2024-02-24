@@ -23,29 +23,6 @@ public class Field : MonoBehaviour
         GenerateField();
     }
 
-    public void Recalculate()
-    {
-        for (int x = 0; x < sizeX; x++)
-        {
-            Queue<int> voidIndexs = new Queue<int>();
-
-            for (int y = 0; y < sizeY; y++)
-            {
-                TileObject tileObject = tiles[x, y].tileObj;
-                if (tileObject == null)
-                {
-                    voidIndexs.Enqueue(y);
-                }
-                else if (tileObject != null && voidIndexs.Count > 0)
-                {
-                    tileObject.ChangeTile(tiles[x, voidIndexs.Dequeue()]);
-                    voidIndexs.Enqueue(y);
-                }
-
-            }
-        }
-    }
-
     private void GenerateField()
     {
         float offSetX = transform.position.x;

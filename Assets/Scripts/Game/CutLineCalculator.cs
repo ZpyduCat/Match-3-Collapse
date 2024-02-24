@@ -32,7 +32,7 @@ public class CutLineCalculator
             openPosition.RemoveAt(openPosition.Count - 1);
             closedPosition.Add(pos);
 
-            if (field.TryGetTile(pos.x, pos.y, out Tile tile) && tile.tileObj != null && tile.tileObj.type == type)
+            if (field.TryGetTile(pos.x, pos.y, out Tile tile) && tile.tileObj != null && tile.tileObj.type == type && tile.tileObj.active)
                 cutLineToCut.Add(pos);
             else
                 continue;
@@ -50,6 +50,9 @@ public class CutLineCalculator
             loop--;
         }
 
+        cutLineToCut.Reverse();
+
         return cutLineToCut;
     }
+
 }
